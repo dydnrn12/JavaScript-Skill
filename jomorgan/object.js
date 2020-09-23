@@ -1,8 +1,8 @@
 function getBill(item){
     return {
         name : item.name,
-        due : twoWeeksFromNow(),
-        total : calculateTotal(item.price),
+        due : 10,
+        total : 100
     };
 }
 
@@ -14,3 +14,7 @@ const bill = getBill({
 function displayBill(bill){
     return '${bill.name} 비용은 ${bill.total} 달러이며 납부일은 ${bill.due} 입니다. ';
 }
+
+console.log(displayBill(bill));
+
+console.log('1+1 = ${1+1}');
