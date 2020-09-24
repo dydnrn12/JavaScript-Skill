@@ -42,3 +42,56 @@ const discounter =  discount => {
 const tenPercentOff = discounter(0.1);
 tenPercentOff(100);
 
+// return 없이도 할 수 있다.
+
+const discounter = discount => price => {return price*(1-discount)};
+
+//함수 호출 시 
+
+discounter(0.1)(100); 
+//이렇게도 가능하다. 
+
+//화살표 함수로 문맥 혼동을 피하는 법
+//함수의 유효 범위와 문맥은 가장 어려운 개념. 유효 범위 = 함수가 접근할 수 있는 변수, 문맥은 함수 또는 클래스에서 this 키워드가 참조하는 것.
+//******** 유효 범위는 함수와 연관되어 있고, 문맥은 객체와 연관되어 있다. *************
+const validator = {
+    message = '는 유효하지 않습니다.',
+    setInvalidMessage(field) {
+        return `${field}${this.message}`;
+    },
+};
+
+validator.setInvalidMessage('도시');
+// this.message는 객체의 속성을 참조할 수 있다. setInvalidMessage() 메서드가 호출될 때 함수에서 this 바인딩을 생성하며 해당 함수가 담긴 객체도 문맥에 포함시키기 때문.
+
+const validator ={
+    message = '는 유효하지 않습니다.',
+    setInvalidMessage(...fields){
+        return fields.map(function(field){
+            return `${field}${this.message}`;
+        });
+    },
+};
+
+validator.setInvalidMessage('도시');
+//함수를 호출할 때마다 호출되는 위치를 바탕으로 this바인딩을 만든다. map()메서드에 콜백 함수로 전달한 경우에는, map() 메서드의 문맥에서 호출되므로
+//이 경우에는 this 바인딩이 validator 객체가 아니다. 전역 객체가 된다.
+
+const validator ={
+    message = '는 유효하지 않습니다.',
+    setInvalidMessage(...fields){
+        return fields.map(field => {
+            return `${field}${this.message}`;
+        });
+    }
+}
+validator.setInvalidMessage('도시');
+//화살표 함수는 함수를 호출할 때 this 바인딩을 새로 만들지 않는다. 정상 작동
+
+const validator ={
+    message : '는 유효하지 않습니다.',
+    setInvalidMessage : field => `${field}${this.message}`,
+};
+
+validator.setInvalidMessage('도시');
+//현재 객체에 대해 새로운 this 문맥 바인딩을 만들지 않았다. 새로운 문맥을 만들지 않았기 때문에, 전역 객체에 바인딩 된 것.
